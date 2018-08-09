@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Form</title>
+<style>
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+</head>
+<body>
+
+
+<form method="POST", action="" id="post-form">{% csrf_token %}
+<table>
+	<tr>
+    <th>Author</th>
+    <th>Title</th>
+    <th>Description</th>
+    <th></th>
+  </tr>
+
+  <tr>	
+  	<td>{{ form.author }}</td>
+  	<td>{{ form.title }}</td>
+  	<td>{{ form.description }}</td>
+    <td><button type="submit" >SUBMIT</button></td>
+  </tr>
+
+</table>
+
+
+	</form>
+<br>
+	<table>
+  <tr>
+    <th>Author</th>
+    <th>Title</th>
+    <th>Description</th>
+    <th>Published Date</th>
+  </tr>
+  
+   
+{% for fields in data %}
+<tr>
+<td>{{ fields.author }}</td>
+<td>{{ fields.title }}</td>
+<td>{{ fields.description }}</td>
+<td>{{ fields.pub_date }}</td>
+</tr>
+{% endfor %}
+</table>
+
+
+<script>
+
+// $(document).on('submit','#post-form' function(event){
+// 	event.preventDefault();
+
+// 	console.log("form submitted!");
+// });
+
+$(document).ready(function() {
+  $("#post-form").submit(function(event) {
+    event.preventDefault();
+    $.ajax({ data: $(this).serialize(), 
+                type: $(this).attr('method'), 
+                url: $(this).attr('action'), 
+                success: function(response) {
+                     console.log(response);
+                     if(response['success']) {
+                         $("#post-form").html("<div class='alert alert-success'> Succesfully sent feedback, thank you! </div>");
+                         $("#post-form").addClass("hidden");
+                     } 
+                     if(response['error']) {
+                         $("#post-form").html("<div class='alert alert-danger'>" +
+                         response['error']['comment'] +"</div>");
+                     } 
+                },
+                error: function (request, status, error) {
+                     console.log(request.responseText);
+                }
+       });
+   });
+});
+	</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
